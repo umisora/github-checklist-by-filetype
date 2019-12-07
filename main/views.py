@@ -8,6 +8,11 @@ app.config['JSON_AS_ASCII'] = False
 GITHUB_WEBHOOK_SECRET_TOKEN = os.getenv('GITHUB_WEBHOOK_SECRET_TOKEN', "dummy")
 
 
+@app.route('/', methods=['GET'])
+def ping():
+    return "Hello World", 200
+
+
 @app.route('/webhook/github/pullrequest', methods=['POST'])
 def webhook_github_pullrequest():
     print("********** Hello API *************")
