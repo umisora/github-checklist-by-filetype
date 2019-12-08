@@ -12,6 +12,7 @@ unittest-xml-reporting = "*"
 [packages]
 flask = "*"
 gunicorn = "*"
+pygithub = "*"
 
 [requires]
 python_version = "3.7"
