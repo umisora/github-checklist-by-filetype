@@ -18,5 +18,5 @@ pygithub = "*"
 python_version = "3.7"
 
 [scripts]
-start = "python main/views.py"
+start = "gunicorn main.views:app --log-file -"
 test = "python -m xmlrunner discover -v tests --output target/testreport"
