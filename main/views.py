@@ -25,6 +25,12 @@ def webhook_github_pullrequest():
         return "", 403
     else:
         print("signature:", signature)
+        PULL_ACTION = payload_dict['pull_request']['state']
+        PULL_NUMBER = payload_dict['pull_request']['number']
+        NEXT_LINK = payload_dict['pull_request']['base']['_links']['self']['href']
+        CHANGE_FILES_COUNT = payload_dict['pull_request']['changed_files']
+        print("PR Parameter", PULL_ACTION, PULL_NUMBER,
+              NEXT_LINK, CHANGE_FILES_COUNT)
         return "", 200
 
 
