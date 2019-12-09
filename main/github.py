@@ -7,35 +7,47 @@ import json
 class GithubClient():
     def __init__(self):
         self.github_token = os.getenv(
-            'GITHUB_PERSONAL_ACCESS_TOKEN', 'fb823ebccc48c6dbb792be7a8f49deda2f7d8be6')
+            'GITHUB_PERSONAL_ACCESS_TOKEN', 'dummy')
         self.github_base_url = os.getenv(
             'GITHUB_BASEURL', 'https://api.github.com')
-        self.client = Github(login_or_token=self.github_token,
-                             base_url=self.github_base_url)
+        self.auth_header = {"Authorization": "token " + self.github_token}
 
-    def get_checklist(self):
-        response = urllib.request.urlopen(
-            "https://api.github.com/repos/umisora/github-checklist-by-filetype/contents/.github/CHECKLIST?ref=master"
-        )
+    def get_github_object(self, filename):
+        request = urllib.request.Request(
+            self.github_base_url + "/repos/umisora/github-checklist-by-filetype/contents/" + filename + "?ref=master", None, self.auth_header)
+        response = urllib.request.urlopen(request)
+
         file_meta = json.loads(response.read().decode("utf-8"))
         file = urllib.request.urlopen(
             file_meta['download_url']
         ).read().decode("utf-8")
-        #print("get checklist¥n", file)
+        # print("get checklist¥n", file)
         return file
 
-    def get_checklist_template(self):
-        print("get checklist template")
-
     # /repos/:owner/:repo/pulls/:pull_number/files
-    def get_files_of_pr(self, repo_name, pr_number):
-        response = urllib.request.urlopen(
-            "https://api.github.com/repos/" + repo_name +
-            "/pulls/" + str(pr_number) + "/files"
+    def get_files_of_pr(self, repo_name, pull_number):
+        request = urllib.request.Request(
+            self.github_base_url + "/repos/" + repo_name +
+            "/pulls/" + str(pull_number) + "/files",
+            None,
+            self.auth_header
         )
+        response = urllib.request.urlopen(request)
         files = json.loads(response.read().decode("utf-8"))
         pr_file_list = []
         for file in files:
             pr_file_list.append(file['filename'])
 
         return pr_file_list
+
+    def get_pr_description(self, repo_name, pull_number):
+        request = urllib.request.Request(
+            self.github_base_url + "/repos/" + repo_name +
+            "/pulls/" + str(pull_number),
+            None,
+            self.auth_header
+        )
+        response = urllib.request.urlopen(request)
+        json_data = json.loads(response.read().decode("utf-8"))
+        description = json_data['head']['repo']['description']
+        return description

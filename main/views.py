@@ -42,7 +42,7 @@ def webhook_github_pullrequest():
         client = GithubClient()
 
         # get checklist
-        checklist = client.get_checklist()
+        checklist = client.get_github_object(".github/CHECKLIST")
         checklist_dict = {}
         for line in checklist.splitlines():
             key = line.split()[0]
@@ -60,10 +60,33 @@ def webhook_github_pullrequest():
         for regexp, template_name in checklist_dict.items():
             for filename in filenames:
                 if re.match(regexp, filename):
-                    print("Match!!", filename, regexp, template_name)
+                    # print("Match!!", filename, regexp, template_name)
                     template_list.append(template_name)
+        # 重複排除
+        unique_template_list = list(set(template_list))
+        print(unique_template_list)
 
-        print(set(template_list))
+        # template filesの中身を取得する
+        checklist_content = "\n\n### CHECKLIST\n"
+        for filename in unique_template_list:
+            checklist_content = '\n'.join([
+                checklist_content,
+                "**■ " + filename + "**"
+            ])
+
+            checklist_content = '\n'.join([
+                checklist_content,
+                client.get_github_object(".github/" + filename)
+            ])
+            checklist_content = checklist_content + '\n'
+
+        checklist_content = checklist_content + \
+            '\ny [umisora/github-checklist-by-filetype](https://github.com/umisora/github-checklist-by-filetype)'
+        print(checklist_content)
+
+        # 現在のPRのDescriptionを取得する
+        description = client.get_pr_description(REPONAME, PULL_NUMBER)
+        print(description)
         return "", 200
 
 
