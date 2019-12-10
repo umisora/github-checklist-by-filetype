@@ -1,18 +1,12 @@
+from main import app
+
 import os
 import json
 import re
-from flask import Flask, jsonify, request
-from main.github import GithubClient
-
-app = Flask(__name__)
-app.config['JSON_AS_ASCII'] = False
+from flask import jsonify, request
+from main.lib.github import GithubClient
 
 GITHUB_WEBHOOK_SECRET_TOKEN = os.getenv('GITHUB_WEBHOOK_SECRET_TOKEN', "dummy")
-
-
-@app.route('/', methods=['GET'])
-def ping():
-    return "Hello World", 200
 
 
 @app.route('/webhook/github/pullrequest', methods=['POST'])
@@ -117,7 +111,3 @@ def webhook_github_pullrequest():
         # 更新が1件でもあったらUpdateする
         client.update_pr_description(REPONAME, PULL_NUMBER, new_description)
         return "", 200
-
-
-if __name__ == '__main__':
-    app.run(debug=True)

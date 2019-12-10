@@ -1,1 +1,1 @@
-web: pipenv run gunicorn main.views:app --log-file -
+web: pipenv run gunicorn -c gunicorn.py run:app --log-file -
