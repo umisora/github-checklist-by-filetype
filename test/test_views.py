@@ -1,12 +1,12 @@
 import unittest
 import json
-from main import views
+import main
 
 
 class TestViews(unittest.TestCase):
 
     def setUp(self):
-        self.app = views.app.test_client()
+        self.app = main.app.test_client()
 
     def test_ping(self):
         response = self.app.get('/')
