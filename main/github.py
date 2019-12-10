@@ -49,5 +49,23 @@ class GithubClient():
         )
         response = urllib.request.urlopen(request)
         json_data = json.loads(response.read().decode("utf-8"))
-        description = json_data['head']['repo']['description']
+        description = json_data['body']
         return description
+
+    def update_pr_description(self, repo_name, pull_number, description):
+        patch_parameter = {}
+        patch_parameter['body'] = description
+        request = urllib.request.Request(
+            self.github_base_url + "/repos/" + repo_name +
+            "/pulls/" + str(pull_number),
+            json.dumps(patch_parameter).encode(),
+            self.auth_header,
+            method='PATCH'
+        )
+        response = urllib.request.urlopen(request)
+        if response.status != 200:
+            print("更新に失敗しました")
+            return "ERR"
+
+        print("更新に成功しました")
+        return "OK"
