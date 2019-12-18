@@ -12,9 +12,16 @@ class GithubClient():
             'GITHUB_BASEURL', 'https://api.github.com')
         self.auth_header = {"Authorization": "token " + self.github_token}
 
-    def get_github_object(self, filename):
+    def get_github_object(self, reponame, filename):
+        print(self.github_base_url + "/repos/" + reponame + "/contents/" +
+              filename + "?ref=master")
         request = urllib.request.Request(
-            self.github_base_url + "/repos/umisora/github-checklist-by-filetype/contents/" + filename + "?ref=master", None, self.auth_header)
+            self.github_base_url + "/repos/" + reponame + "/contents/" +
+            filename + "?ref=master",
+            None,
+            self.auth_header
+        )
+        print(request)
         response = urllib.request.urlopen(request)
 
         file_meta = json.loads(response.read().decode("utf-8"))
