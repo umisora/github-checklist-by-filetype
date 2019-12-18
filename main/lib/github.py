@@ -46,18 +46,6 @@ class GithubClient():
 
         return pr_file_list
 
-    def get_pr_description(self, repo_name, pull_number):
-        request = urllib.request.Request(
-            self.github_base_url + "/repos/" + repo_name +
-            "/pulls/" + str(pull_number),
-            None,
-            self.auth_header
-        )
-        response = urllib.request.urlopen(request)
-        json_data = json.loads(response.read().decode("utf-8"))
-        description = json_data['body']
-        return description
-
     def update_pr_description(self, repo_name, pull_number, description):
         patch_parameter = {}
         patch_parameter['body'] = description
