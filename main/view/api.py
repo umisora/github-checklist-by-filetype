@@ -15,9 +15,9 @@ def webhook_github_pullrequest():
     body = request.get_data().decode('utf-8')
     token = request.args.get('token')
     payload_dict = json.loads(body)
-    print(payload_dict)
+    # print(payload_dict)
     signature = request.headers.get('X-Hub-Signature')
-    print("signature:", signature)
+    # print("signature:", signature)
 
     if token != GITHUB_WEBHOOK_SECRET_TOKEN:
         return "Token is UnMatch ", 401
