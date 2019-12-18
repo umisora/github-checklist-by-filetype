@@ -12,11 +12,10 @@ unittest-xml-reporting = "*"
 [packages]
 flask = "*"
 gunicorn = "*"
-pygithub = "*"
 
 [requires]
 python_version = "3.7"
 
 [scripts]
-start = "gunicorn -c gunicorn.py run:app --log-file -"
-test = "python -m xmlrunner discover -v test --output target/testreport"
+start = "pipenv run python run.py"
+test = "pipenv run python -m xmlrunner discover -v test --output target/testreport"

@@ -15,9 +15,9 @@ def webhook_github_pullrequest():
     body = request.get_data().decode('utf-8')
     token = request.args.get('token')
     payload_dict = json.loads(body)
-    print(payload_dict)
+    # print(payload_dict)
     signature = request.headers.get('X-Hub-Signature')
-    print("signature:", signature)
+    # print("signature:", signature)
 
     if token != GITHUB_WEBHOOK_SECRET_TOKEN:
         return "Token is UnMatch ", 401
@@ -30,6 +30,7 @@ def webhook_github_pullrequest():
     CHANGE_FILES_COUNT = payload_dict['pull_request']['changed_files']
     REPONAME = payload_dict['pull_request']['head']['repo']['full_name']
     HOOK_EVENT_LIST = ['opened', 'reopened', 'synchronize']
+    DESCRIPTION = payload_dict['pull_request']['body']
 
     print("PR Parameter", PULL_ACTION, PULL_NUMBER,
           NEXT_LINK, CHANGE_FILES_COUNT)
@@ -67,10 +68,6 @@ def webhook_github_pullrequest():
     unique_template_list = list(set(template_list))
     print(unique_template_list)
 
-    # 現在のPRのDescriptionを取得する
-    description = client.get_pr_description(REPONAME, PULL_NUMBER)
-    # print(description)
-
     # template filesの中身を取得する
     CHECKLIST_HEADER = '\n\n---- \n### CHECKLIST\n'
     CHECKLIST_FOOTER = '\nby [umisora/github-checklist-by-filetype](https://github.com/umisora/github-checklist-by-filetype)'
@@ -83,7 +80,7 @@ def webhook_github_pullrequest():
     for filename in unique_template_list:
         # checklistが既に含まれていたらskip
         print("FileName:", filename)
-        if filename in description:
+        if filename in DESCRIPTION:
             continue
 
         # 含まれていなければjoin
@@ -95,7 +92,7 @@ def webhook_github_pullrequest():
 
         checklist_content = '\n'.join([
             checklist_content,
-            client.get_github_object(".github/" + filename)
+            client.get_github_object(REPONAME, ".github/" + filename)
         ])
         checklist_content = checklist_content + '\n'
 
@@ -106,7 +103,7 @@ def webhook_github_pullrequest():
     # 更新がある場合、末尾にChecklistを追加する
     # その際にFooterをつけ直す
     print(checklist_content)
-    new_description = description.replace(
+    new_description = DESCRIPTION.replace(
         CHECKLIST_FOOTER, '', 1).strip() + checklist_content + CHECKLIST_FOOTER
     print(new_description)
 

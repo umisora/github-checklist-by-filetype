@@ -1,5 +1,4 @@
 import os
-from github import Github
 import urllib.request
 import json
 
@@ -21,13 +20,14 @@ class GithubClient():
             None,
             self.auth_header
         )
-        print(request)
         response = urllib.request.urlopen(request)
 
         file_meta = json.loads(response.read().decode("utf-8"))
+        print(file_meta['download_url'])
         file = urllib.request.urlopen(
             file_meta['download_url']
         ).read().decode("utf-8")
+
         # print("get checklist¥n", file)
         return file
 
@@ -46,18 +46,6 @@ class GithubClient():
             pr_file_list.append(file['filename'])
 
         return pr_file_list
-
-    def get_pr_description(self, repo_name, pull_number):
-        request = urllib.request.Request(
-            self.github_base_url + "/repos/" + repo_name +
-            "/pulls/" + str(pull_number),
-            None,
-            self.auth_header
-        )
-        response = urllib.request.urlopen(request)
-        json_data = json.loads(response.read().decode("utf-8"))
-        description = json_data['body']
-        return description
 
     def update_pr_description(self, repo_name, pull_number, description):
         patch_parameter = {}

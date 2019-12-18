@@ -1,0 +1,26 @@
+{
+    "name": "github-checklist-by-filetype",
+    "description": "Add a review checklist for each file type to the description of the PullRequest.",
+    "keywords": [
+        "checklist",
+        "github"
+    ],
+    "website": "https://github.com/umisora/github-checklist-by-filetype",
+    "repository": "https://github.com/umisora/github-checklist-by-filetype",
+    "success_url": "/",
+    "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": {
+            "description": "An access token that can be written to the repository where CHECKLIST is written",
+            "value": "please input github personal access token"
+        },
+        "GITHUB_WEBHOOK_SECRET_TOKEN": {
+            "description": "value of token for the request parameter",
+            "generator": "secret"
+        }
+    },
+    "buildpacks": [
+        {
+            "url": "https://github.com/heroku/heroku-buildpack-python"
+        }
+    ]
+}
