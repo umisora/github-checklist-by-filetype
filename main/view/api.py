@@ -95,7 +95,7 @@ def webhook_github_pullrequest():
 
         checklist_content = '\n'.join([
             checklist_content,
-            client.get_github_object(".github/" + filename)
+            client.get_github_object(REPONAME, ".github/" + filename)
         ])
         checklist_content = checklist_content + '\n'
 
