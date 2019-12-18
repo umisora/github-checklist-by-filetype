@@ -20,13 +20,14 @@ class GithubClient():
             None,
             self.auth_header
         )
-        print(request)
         response = urllib.request.urlopen(request)
 
         file_meta = json.loads(response.read().decode("utf-8"))
+        print(file_meta['download_url'])
         file = urllib.request.urlopen(
             file_meta['download_url']
         ).read().decode("utf-8")
+
         # print("get checklist¥n", file)
         return file
 
