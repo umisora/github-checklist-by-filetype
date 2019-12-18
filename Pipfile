@@ -17,5 +17,5 @@ gunicorn = "*"
 python_version = "3.7"
 
 [scripts]
-start = "gunicorn -c ./gunicorn.py run:app --log-file -"
-test = "python -m xmlrunner discover -v test --output target/testreport"
+start = "gunicorn run:app --log-file -"
+test = "pipenv run python -m xmlrunner discover -v test --output target/testreport"
