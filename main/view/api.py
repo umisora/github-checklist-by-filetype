@@ -12,39 +12,31 @@ GITHUB_WEBHOOK_SECRET_TOKEN = os.getenv('GITHUB_WEBHOOK_SECRET_TOKEN', "dummy")
 @app.route('/webhook/github/pullrequest', methods=['POST'])
 def webhook_github_pullrequest():
     print("********** Hello API *************")
-    body = request.get_data().decode('utf-8')
-    token = request.args.get('token')
-    payload_dict = json.loads(body)
-    # print(payload_dict)
-    signature = request.headers.get('X-Hub-Signature')
-    # print("signature:", signature)
-
-    if token != GITHUB_WEBHOOK_SECRET_TOKEN:
-        return "Token is UnMatch ", 401
-    else:
-        print("Token is Match")
-
-    PULL_ACTION = payload_dict['action']
-    PULL_NUMBER = payload_dict['pull_request']['number']
-    NEXT_LINK = payload_dict['pull_request']['_links']['self']['href']
-    CHANGE_FILES_COUNT = payload_dict['pull_request']['changed_files']
-    REPONAME = payload_dict['pull_request']['head']['repo']['full_name']
     HOOK_EVENT_LIST = ['opened', 'reopened', 'synchronize']
-    DESCRIPTION = payload_dict['pull_request']['body']
 
-    print("PR Parameter", PULL_ACTION, PULL_NUMBER,
-          NEXT_LINK, CHANGE_FILES_COUNT)
-    if CHANGE_FILES_COUNT == 0:
-        print("skip because change file count is Zero")
-        return "skip because change file count is Zero", 200
-    if PULL_ACTION not in HOOK_EVENT_LIST:
-        print("skip because pull action is not in hook event list")
-        return "skip because pull action is not in hook event list", 200
+    body = request.get_data().decode('utf-8')
+    signature = request.args.get('token')
+    # signature = request.headers.get('X-Hub-Signature')
+    payload_dict = json.loads(body)
+    payload_action = payload_dict['action']
+    payload_pull_number = payload_dict['pull_request']['number']
+    payload_next_link = payload_dict['pull_request']['_links']['self']['href']
+    payload_change_files_count = payload_dict['pull_request']['changed_files']
+    payload_reponame = payload_dict['pull_request']['head']['repo']['full_name']
+    pauload_description = payload_dict['pull_request']['body']
+
+    if not __verify_request_signature(signature):
+        "Signature is UnMatch.", 401
+    if payload_change_files_count == 0 | payload_action not in HOOK_EVENT_LIST:
+        return "Skip request.", 200
+
+    print("PR Parameter", payload_action, payload_pull_number,
+          payload_next_link, payload_change_files_count)
 
     client = GithubClient()
 
     # get checklist
-    checklist = client.get_github_object(REPONAME, ".github/CHECKLIST")
+    checklist = client.get_github_object(payload_reponame, ".github/CHECKLIST")
     checklist_dict = {}
     for line in checklist.splitlines():
         key = line.split()[0]
@@ -54,7 +46,7 @@ def webhook_github_pullrequest():
     print(checklist_dict)
 
     # get filenames
-    filenames = client.get_files_of_pr(REPONAME, PULL_NUMBER)
+    filenames = client.get_files_of_pr(payload_reponame, payload_pull_number)
     print(filenames)
 
     # file match
@@ -73,14 +65,14 @@ def webhook_github_pullrequest():
     CHECKLIST_FOOTER = '\nby [umisora/github-checklist-by-filetype](https://github.com/umisora/github-checklist-by-filetype)'
 
     # 初回だけ
-    if PULL_ACTION == "opened":
+    if payload_action == "opened":
         checklist_content = CHECKLIST_HEADER
 
     join_count = 0
     for filename in unique_template_list:
         # checklistが既に含まれていたらskip
         print("FileName:", filename)
-        if filename in DESCRIPTION:
+        if filename in pauload_description:
             continue
 
         # 含まれていなければjoin
@@ -92,7 +84,7 @@ def webhook_github_pullrequest():
 
         checklist_content = '\n'.join([
             checklist_content,
-            client.get_github_object(REPONAME, ".github/" + filename)
+            client.get_github_object(payload_reponame, ".github/" + filename)
         ])
         checklist_content = checklist_content + '\n'
 
@@ -103,10 +95,20 @@ def webhook_github_pullrequest():
     # 更新がある場合、末尾にChecklistを追加する
     # その際にFooterをつけ直す
     print(checklist_content)
-    new_description = DESCRIPTION.replace(
+    new_description = pauload_description.replace(
         CHECKLIST_FOOTER, '', 1).strip() + checklist_content + CHECKLIST_FOOTER
     print(new_description)
 
     # 更新が1件でもあったらUpdateする
-    client.update_pr_description(REPONAME, PULL_NUMBER, new_description)
+    client.update_pr_description(
+        payload_reponame, payload_pull_number, new_description)
     return "", 200
+
+
+def __verify_request_signature(self, signature):
+    if signature != GITHUB_WEBHOOK_SECRET_TOKEN:
+        print("Token is UnMatch")
+        return False
+    else:
+        print("Token is Match")
+        return True
