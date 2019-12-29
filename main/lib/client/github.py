@@ -4,42 +4,23 @@ import json
 
 
 class GithubClient():
-    def __init__(self):
-        self.github_token = os.getenv(
-            'GITHUB_PERSONAL_ACCESS_TOKEN', 'dummy')
-        self.github_base_url = os.getenv(
-            'GITHUB_BASEURL', 'https://api.github.com')
-        self.auth_header = {"Authorization": "token " + self.github_token}
-
     def get_github_object(self, reponame, filename):
-        print(self.github_base_url + "/repos/" + reponame + "/contents/" +
-              filename + "?ref=master")
-        request = urllib.request.Request(
-            self.github_base_url + "/repos/" + reponame + "/contents/" +
-            filename + "?ref=master",
-            None,
-            self.auth_header
+        request = GithubRequest(
+            "/repos/" + reponame + "/contents/" + filename + "?ref=master"
         )
         response = urllib.request.urlopen(request)
 
         file_meta = json.loads(response.read().decode("utf-8"))
-        print(file_meta['download_url'])
-        file = urllib.request.urlopen(
-            file_meta['download_url']
-        ).read().decode("utf-8")
+        file = urllib.request.urlopen(file_meta['download_url'])
 
-        # print("get checklist¥n", file)
-        return file
+        return file.read().decode("utf-8")
 
-    # /repos/:owner/:repo/pulls/:pull_number/files
     def get_files_of_pr(self, repo_name, pull_number):
-        request = urllib.request.Request(
-            self.github_base_url + "/repos/" + repo_name +
-            "/pulls/" + str(pull_number) + "/files",
-            None,
-            self.auth_header
+        request = GithubRequest(
+            "/repos/" + repo_name + "/pulls/" + str(pull_number) + "/files"
         )
         response = urllib.request.urlopen(request)
+
         files = json.loads(response.read().decode("utf-8"))
         pr_file_list = []
         for file in files:
@@ -50,11 +31,9 @@ class GithubClient():
     def update_pr_description(self, repo_name, pull_number, description):
         patch_parameter = {}
         patch_parameter['body'] = description
-        request = urllib.request.Request(
-            self.github_base_url + "/repos/" + repo_name +
-            "/pulls/" + str(pull_number),
+        request = GithubRequest(
+            "/repos/" + repo_name + "/pulls/" + str(pull_number),
             json.dumps(patch_parameter).encode(),
-            self.auth_header,
             method='PATCH'
         )
         response = urllib.request.urlopen(request)
@@ -64,3 +43,22 @@ class GithubClient():
 
         print("更新に成功しました")
         return "OK"
+
+
+class GithubRequest(urllib.request.Request):
+    def __init__(self, url, data=None, headers={},
+                 origin_req_host=None, unverifiable=False,
+                 method=None):
+
+        self.github_token = os.getenv(
+            'GITHUB_PERSONAL_ACCESS_TOKEN', 'dummy')
+        self.github_base_url = os.getenv(
+            'GITHUB_BASEURL', 'https://api.github.com')
+        self.auth_header = {"Authorization": "token " + self.github_token}
+
+        headers.update(self.auth_header)
+        url = self.github_base_url + url
+
+        super().__init__(url, data, headers,
+                         origin_req_host, unverifiable,
+                         method)
