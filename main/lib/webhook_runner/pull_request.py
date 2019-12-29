@@ -21,6 +21,7 @@ class Runner(BaseRunner):
 
     def run(self):
         print('Start Pull Request Webhook Runner.')
+
         # Validation
         if self.change_files_count == 0 or \
                 self.action not in self.HOOK_EVENT_LIST:
@@ -46,20 +47,22 @@ class Runner(BaseRunner):
 
     def _description_builder(self):
         new_description = self.description
-
         checklist_content = ""
-        checklists = Checklist.get_by_file_match(
-            self._get_files(), self.reponame)
+
+        # Add header for the first time
         if not self.checklists_contains:
             checklist_content = self.CHECKLIST_HEADER
 
-        join_count = 0
+        # Select the checklist to use
+        template_count = 0
+        checklists = Checklist.get_by_file_match(
+            self._get_files(), self.reponame)
         for template_name in checklists:
+            # Skip if already used
             if template_name in self.description:
                 continue
 
-            # 含まれていなければjoin
-            join_count += 1
+            # Build a checklist
             checklist_content = '\n'.join([
                 checklist_content,
                 "**■ " + template_name + "**",
@@ -68,8 +71,10 @@ class Runner(BaseRunner):
                 ),
                 '\n'
             ])
+            template_count += 1
 
-        if join_count > 0:
+        # Add footer
+        if template_count > 0:
             new_description = self.description.replace(
                 self.CHECKLIST_FOOTER, '', 1).strip() +\
                 checklist_content + self.CHECKLIST_FOOTER
