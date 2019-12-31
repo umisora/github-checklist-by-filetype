@@ -1,0 +1,18 @@
+{
+    "name": "CHECKLIST",
+    "path": ".github/CHECKLIST",
+    "sha": "c1d613e74309e72b498e9dbb6f009d8e7a657c59",
+    "size": 72,
+    "url": "https://api.github.com/repos/umisora/github-checklist-by-filetype/contents/.github/CHECKLIST?ref=master",
+    "html_url": "https://github.com/umisora/github-checklist-by-filetype/blob/master/.github/CHECKLIST",
+    "git_url": "https://api.github.com/repos/umisora/github-checklist-by-filetype/git/blobs/c1d613e74309e72b498e9dbb6f009d8e7a657c59",
+    "download_url": "https://raw.githubusercontent.com/umisora/github-checklist-by-filetype/master/.github/CHECKLIST",
+    "type": "file",
+    "content": "LiogREVGQVVMVC5tZAouKi5weSBTRVJWRVJTSURFX0NIRUNLTElTVC5tZAou\nKi5tZCBNQVJLRE9XTl9DSEVDS0xJU1QubWQK\n",
+    "encoding": "base64",
+    "_links": {
+        "self": "https://api.github.com/repos/umisora/github-checklist-by-filetype/contents/.github/CHECKLIST?ref=master",
+        "git": "https://api.github.com/repos/umisora/github-checklist-by-filetype/git/blobs/c1d613e74309e72b498e9dbb6f009d8e7a657c59",
+        "html": "https://github.com/umisora/github-checklist-by-filetype/blob/master/.github/CHECKLIST"
+    }
+}
