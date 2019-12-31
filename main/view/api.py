@@ -15,11 +15,11 @@ def webhook_github():
         return "Signature is UnMatch.", 401
 
     print("********** Hello API *************")
-    print(request.headers.get('X-GitHub-Event'))
     message = Webhook.run(
         request.headers.get('X-GitHub-Event'),
         request.get_data().decode('utf-8')
     )
+    print(message, '200')
     return "message", 200
 
 

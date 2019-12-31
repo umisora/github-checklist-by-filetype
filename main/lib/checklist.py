@@ -27,8 +27,17 @@ class Checklist():
     def _get_chacklist_templates(self, checklist: str) -> dict:
         checklist_dict = {}
         for line in checklist.splitlines():
-            key = line.split()[0]
-            value = line.split()[1]
+            formatted_line = line.strip()
+
+            # 空行skip
+            if len(formatted_line) <= 0:
+                continue
+            # コメント行skip
+            if formatted_line[0:1] == "#":
+                continue
+
+            key = formatted_line.split()[0]
+            value = formatted_line.split()[1]
             checklist_dict[key] = value
 
         return checklist_dict

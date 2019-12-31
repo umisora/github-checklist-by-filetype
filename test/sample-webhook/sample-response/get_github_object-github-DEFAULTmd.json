@@ -1,0 +1,18 @@
+{
+    "name": "DEFAULT.md",
+    "path": ".github/DEFAULT.md",
+    "sha": "69681631b6da8b098ed6fe009369007a517daadc",
+    "size": 45,
+    "url": "https://api.github.com/repos/umisora/github-checklist-by-filetype/contents/.github/DEFAULT.md?ref=master",
+    "html_url": "https://github.com/umisora/github-checklist-by-filetype/blob/master/.github/DEFAULT.md",
+    "git_url": "https://api.github.com/repos/umisora/github-checklist-by-filetype/git/blobs/69681631b6da8b098ed6fe009369007a517daadc",
+    "download_url": "https://raw.githubusercontent.com/umisora/github-checklist-by-filetype/master/.github/DEFAULT.md",
+    "type": "file",
+    "content": "LSBbIF0gREVGQVVMVF9DSEVDSyAwMQotIFsgXSBERUZBVUxUX0NIRUNLIDAy\n",
+    "encoding": "base64",
+    "_links": {
+        "self": "https://api.github.com/repos/umisora/github-checklist-by-filetype/contents/.github/DEFAULT.md?ref=master",
+        "git": "https://api.github.com/repos/umisora/github-checklist-by-filetype/git/blobs/69681631b6da8b098ed6fe009369007a517daadc",
+        "html": "https://github.com/umisora/github-checklist-by-filetype/blob/master/.github/DEFAULT.md"
+    }
+}

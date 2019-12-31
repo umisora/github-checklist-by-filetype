@@ -6,7 +6,6 @@ from main.lib.checklist import Checklist
 class Runner(BaseRunner):
     def __init__(self, payload):
         super().__init__(payload)
-        print('Initilize Pull Request Runnner.')
         self.CHECKLIST_HEADER = '\n\n---- \n### CHECKLIST\n'
         self.CHECKLIST_FOOTER = '\nby [umisora/github-checklist-by-filetype](https://github.com/umisora/github-checklist-by-filetype)'
         self.HOOK_EVENT_LIST = ['opened', 'reopened', 'synchronize']
