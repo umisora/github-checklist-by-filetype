@@ -20,7 +20,7 @@ def webhook_github():
         request.get_data().decode('utf-8')
     )
     print(message, '200')
-    return "message", 200
+    return message, 200
 
 
 def _verify_request_signature(signature):

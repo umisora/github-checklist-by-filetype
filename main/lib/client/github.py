@@ -28,8 +28,12 @@ class GithubClient():
             "/pulls/" + str(pull_number) + "/files",
             headers=self.auth_header
         )
+        if response.status_code != 200:
+            raise RuntimeError(
+                'Get files of PR is failed.' + str(response.json()))
 
         files = response.json()
+        print(files)
         pr_file_list = []
         for file in files:
             pr_file_list.append(file['filename'])
@@ -44,10 +48,9 @@ class GithubClient():
             json=json.dumps(parameter),
             headers=self.auth_header
         )
-
         if response.status_code != 200:
-            print("更新に失敗しました")
-            return "ERR"
+            raise RuntimeError(
+                'Update PR description is fail.' + str(response.json()))
 
         print("更新に成功しました")
         return "OK"
