@@ -15,16 +15,20 @@ class Runner(BaseRunner):
         self.change_files_count = self.payload['pull_request']['changed_files']
         self.reponame = self.payload['pull_request']['head']['repo']['full_name']
         self.description = self.payload['pull_request']['body']
+        self.draft = self.payload['pull_request']['draft']
         self.checklists_contains = self.CHECKLIST_HEADER in self.description
         self.client = GithubClient()
 
     def run(self):
-        print('Start Pull Request Webhook Runner.')
+        print("Start Pull Request Webhook Runner. PR#" + str(self.pull_number))
 
         # Validation
         if self.change_files_count == 0 or \
                 self.action not in self.HOOK_EVENT_LIST:
-            return "Skip request."
+            return "[Skip] Change file count is 0."
+
+        if self.draft:
+            return "[Skip] This pull request is Draft."
 
         print("PR Parameter", self.action, self.pull_number,
               self.change_files_count)
